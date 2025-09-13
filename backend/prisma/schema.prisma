@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // set in .env
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  role          Role
+  skills        String[] 
+  interests     String[]
+  profileScore  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  events        Event[]   @relation("OrganizerEvents")
+  registrations Registration[]
+  teams         Team[]    @relation("TeamMembers")
+  messages      Message[]
+}
+
+model Event {
+  id                 Int            @id @default(autoincrement())
+  title              String
+  description        String?
+  organizerId        Int
+  organizer          User           @relation("OrganizerEvents", fields: [organizerId], references: [id])
+  startDate          DateTime
+  endDate            DateTime
+  tags               String[]
+  views              Int            @default(0)
+  registrationsCount Int            @default(0)
+  engagementScore    Int            @default(0)
+  createdAt          DateTime       @default(now())
+  teams              Team[]
+  registrations      Registration[]
+  messages           Message[]
+  analytics          Analytics?
+}
+
+model Team {
+  id            Int       @id @default(autoincrement())
+  eventId       Int
+  event         Event     @relation(fields: [eventId], references: [id])
+  name          String?
+  skillsCovered String[]
+  score         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  members       User[]    @relation("TeamMembers")
+  registrations Registration[]
+}
+
+model Registration {
+  id        Int       @id @default(autoincrement())
+  eventId   Int
+  userId    Int
+  status    RegistrationStatus @default(registered)
+  teamId    Int?
+  createdAt DateTime  @default(now())
+  
+  event Event @relation(fields: [eventId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+  team  Team? @relation(fields: [teamId], references: [id])
+
+  @@unique([eventId, userId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  senderId  Int
+  message   String
+  timestamp DateTime @default(now())
+
+  event  Event @relation(fields: [eventId], references: [id])
+  sender User  @relation(fields: [senderId], references: [id])
+}
+
+model Analytics {
+  id              Int    @id @default(autoincrement())
+  eventId         Int    @unique
+  attendanceRate  Float  @default(0)
+  avgEngagement   Float  @default(0)
+  sponsorRoi      Float  @default(0)
+
+  event Event @relation(fields: [eventId], references: [id])
+}
+
+enum Role {
+  organizer
+  participant
+  sponsor
+}
+
+enum RegistrationStatus {
+  registered
+  checkedIn
+  completed
+}
