@@ -4,7 +4,8 @@ import Topbar from "../components/Topbar";
 import EventForm from "../components/EventForm";
 import API from "../services/api";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import Sidebar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
+
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);

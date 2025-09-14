@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function Sidebar() {
+export default function SideBar() {
   return (
     <div className="w-64 bg-white shadow-lg h-screen p-4">
       <h2 className="text-xl font-bold mb-6">Organizer</h2>
