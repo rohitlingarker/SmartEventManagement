@@ -1,7 +1,8 @@
 {
   "name": "smart-event-management-backend",
   "scripts": {
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",
